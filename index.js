@@ -17,21 +17,29 @@ function processFile(file) {
   var reader = new FileReader();
   reader.onload = function () {
     loadedJSON = JSON.stringify(JSON.parse(String(reader.result)), null, '\t').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
+    renderJSON(loadedJSON, lineNow);
     fileLoaded = 1;
+    lineNow = 0;
+    document.querySelectorAll('#jsonArea > div')[0].focus();
   };
   reader.readAsText(file, /* optional */ "euc-kr");
 }
 
 function parseJSON(json) {
   json = json
+  .replace(/(.*)\n/g, '<div>$1</div>')
   .replace(/([0-9|.]+)/g, 'SpAnMaRkUpA$1ClOsEsPaN')
   .replace(/(\"(.|[^"]*)\")/g, 'SpAnMaRkUpB$1ClOsEsPaN')
   .replace(/SpAnMaRkUpA/g, '<span style="color:#e362d2">')
   .replace(/SpAnMaRkUpB/g, '<span style="color:#66e362">')
-  .replace(/ClOsEsPaN/g, '</span>')
+  .replace(/ClOsEsPaN/g, '</span>');
   return json;
 }
 
+
+function changeJSON(json='', json2='', line=0) {
+
+}
 function renderJSON(json='', line=0, forcusRender=0) {
   if (!fileLoaded) return;
   totLines = loadedJSON.split('\n').length;
@@ -44,9 +52,10 @@ function renderJSON(json='', line=0, forcusRender=0) {
   } else {
     partJson = '';
   }
-  if (document.querySelectorAll('#jsonArea > div')[0].innerHTML.replace(/\<br\>/g, '\n') != parseJSON(partJson) || forcusRender || lineRendered != lineNow) {
+  if (document.querySelectorAll('#jsonArea > div')[0].innerHTML != parseJSON(partJson) || forcusRender || lineRendered != lineNow) {
+    document.querySelectorAll('#jsonArea > div')[0].addEventListener('mousedown', preventLoseFocus);
     lineRendered = lineNow;
-    document.querySelectorAll('#jsonArea > div')[0].innerHTML = parseJSON(partJson.replace(/\n/g, '<br>'));
+    document.querySelectorAll('#jsonArea > div')[0].innerHTML = parseJSON(partJson);
     document.querySelectorAll('#lineNumArea > div')[0].innerHTML = '';
     for (var i = Math.floor(line)-1; i < Math.floor(line)+99; i++) {
       document.querySelectorAll('#lineNumArea > div')[0].innerHTML += (i+2) + '<br>';
@@ -55,12 +64,14 @@ function renderJSON(json='', line=0, forcusRender=0) {
     document.querySelectorAll('#jsonArea > div')[0].style.transform = `translate(0, -${2*o}vh)`;
     document.querySelectorAll('#lineNumArea > div')[0].style.transform = `translate(0, -${2*o}vh)`;
     document.querySelectorAll('#scrollBar > div')[0].style.transform = `translate(0, ${88*(line/totLines)}vh)`;
+    document.querySelectorAll('#jsonArea > div')[0].removeEventListener('mousedown', preventLoseFocus, false);
   }
 }
 
 setInterval( function () {
   if (totLines < lineNow) lineNow=totLines;
   renderJSON(loadedJSON, lineNow);
+  document.querySelectorAll('#jsonArea > div')[0].focus();
 }, 50);
 
 function differeanceAt(string1, string2) {
@@ -75,6 +86,10 @@ function differeanceAt(string1, string2) {
   }
 };
 
+function preventLoseFocus(e) {
+  e.preventDefault();
+  document.execCommand('bold', false);
+}
 function wheel(event) {
   lineNow += event.deltaY/33;
   if (lineNow < 0) lineNow=0;

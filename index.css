@@ -3,6 +3,10 @@
   font-family: 'Roboto Mono', monospace;
   overflow: hidden;
 }
+[contenteditable]:focus {
+  outline: 0px solid transparent;
+}
+
 #loadFile {
   padding-top: 1.25vh;
   width: 100vw; height: 4.75vh;
@@ -35,6 +39,7 @@
   width: 3.3vw; height: 94vh;
   text-align: right;
   overflow: visible;
+  border: none;
 }
 #jsonArea {
   padding-left: 0.7vw;
