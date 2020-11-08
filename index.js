@@ -1,4 +1,4 @@
-var loadedJSON;
+var loadedJSON = '';
 var fileLoaded = 0;
 var lineNow = 0;
 var lineRendered = -1;
@@ -16,7 +16,11 @@ function loadFile() {
 function processFile(file) {
   var reader = new FileReader();
   reader.onload = function () {
-    loadedJSON = JSON.stringify(JSON.parse(String(reader.result)), null, '\t').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
+    try {
+      loadedJSON = JSON.stringify(JSON.parse(String(reader.result)), null, '\t').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
+    } catch (e) {
+      loadedJSON = String(reader.result.replace(/,/g, ',\n')).replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;');
+    }
     renderJSON(loadedJSON, lineNow);
     fileLoaded = 1;
     lineNow = 0;
@@ -27,12 +31,25 @@ function processFile(file) {
 
 function parseJSON(json) {
   json = json
-  .replace(/(.*)\n/g, '<div>$1</div>')
+  .replace(/(.*)\n/g, '☒$1☐')
   .replace(/([0-9|.]+)/g, 'SpAnMaRkUpA$1ClOsEsPaN')
   .replace(/(\"(.|[^"]*)\")/g, 'SpAnMaRkUpB$1ClOsEsPaN')
   .replace(/SpAnMaRkUpA/g, '<span style="color:#e362d2">')
   .replace(/SpAnMaRkUpB/g, '<span style="color:#66e362">')
   .replace(/ClOsEsPaN/g, '</span>');
+  //.replace(/((,+[\n☒☐]*){2,})/g, 'SpAnMaRkUpC$1ClOsEsPaN')
+  //.replace(/SpAnMaRkUpC/g, '<span style="color:#ed3e3e">')
+  repSpans = json.match(/(\<[^>]+>[^>]+\<\/[^>]+>)/g);
+  json = json.replace(/(\<[^>]+>[^>]+\<\/[^>]+>)/g, '☑');
+  json = json.replace(/(([^☑\n☒☐])+)/g, '<span>$1</span>');
+  if (repSpans !== null) {
+    for (var i = 0; i < repSpans.length; i++) {
+      json = json.replace(/☑/, repSpans[i]);
+    }
+  }
+  json = json
+  .replace(/☒/g, '<div>')
+  .replace(/☐/g, '</div>');
   return json;
 }
 
@@ -103,6 +120,22 @@ window.onwheel = wheel;
   var div = document.getElementById("scrollBar");
   div.addEventListener("mousedown", mouseDown);
 }());
+function setCaret(line, char) {
+  var el = document.querySelectorAll('#jsonArea > div')[0];
+  var range = document.createRange();
+  var sel = window.getSelection();
+  var lineLeng = 0;
+  var charPer = [];
+
+  for (var i = 0; i < el.childNodes[line].childNodes.length; i++) {
+    lineLeng += el.childNodes[line].childNode[i]
+  }
+  //range.setStart(el.childNodes[line], 5);
+  //range.collapse(true);
+
+  //sel.removeAllRanges();
+  //sel.addRange(range);
+}
 
 String.prototype.replaceAt = function(index, character) {
   return this.substr(0, index) + character + this.substr(index+character.length);
