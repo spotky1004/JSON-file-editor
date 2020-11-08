@@ -1,0 +1,63 @@
+* {
+  margin: 0; padding: 0;
+  font-family: 'Roboto Mono', monospace;
+  overflow: hidden;
+}
+#loadFile {
+  padding-top: 1.25vh;
+  width: 100vw; height: 4.75vh;
+  font-size: 2.5vh; text-align: center; color: white; font-weight: bold;
+  background-color: #7abee6;
+  cursor: pointer; user-select: none;
+  transition: background-color 0.2s, text-shadow 0.2s, box-shadow 0.2s;
+}
+#loadFile:hover {
+  text-shadow: 0 0 1vh #fff;
+  background-color: #67add6; box-shadow: 0 0 .4vw .4vh #fff inset;
+}
+#loadFile:active {
+  background-color: #7abee6;
+  transition: background-color 0s, text-shadow 0.2s, box-shadow 0.2s;
+}
+#loadArea {
+  width: 100vw; height: 94vh;
+  background-color: #383838;
+}
+#lineNumArea {
+  padding-right: 0.7vw;
+  display: block; float: left;
+  width: 3.3vw; height: 94vh;
+  color: #c2c2c2; font-size: 2vh;
+  background-color: #5c5c5c;
+  overflow: visible; user-select: none;
+}
+#lineNumArea > div {
+  width: 3.3vw; height: 94vh;
+  text-align: right;
+  overflow: visible;
+}
+#jsonArea {
+  padding-left: 0.7vw;
+  display: block; float: left;
+  width: 93.3vw; height: 94vh;
+  color: #e3ab62; font-size: 2vh;
+  overflow: visible;
+}
+#jsonArea > div {
+  width: 93.3vw; height: 94vh;
+  overflow: visible;
+}
+#scrollBar {
+  display: block; float: left;
+  width: 2vw; height: 94vh;
+  background-color: #5c5c5c;
+}
+#scrollPoint {
+  width: 2vw; height: 6vh;
+  background-color: #aec7cf;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+#scrollPoint:hover {
+  background-color: #77959e;
+}
